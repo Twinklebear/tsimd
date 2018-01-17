@@ -40,7 +40,9 @@ namespace tsimd {
 
   TSIMD_INLINE vboolf4 operator!(const vboolf4 &m)
   {
-#if defined(__SSE__)
+#if defined(__AVX512VL__)
+    return !m.v;
+#elif defined(__SSE__)
     return _mm_xor_ps(m, vboolf4(true));
 #else
     vboolf4 result;
@@ -56,7 +58,9 @@ namespace tsimd {
 
   TSIMD_INLINE vboolf8 operator!(const vboolf8 &m)
   {
-#if defined(__AVX512F__) || defined(__AVX2__) || defined(__AVX__)
+#if defined(__AVX512VL__)
+    return !m.v;
+#elif defined(__AVX512F__) || defined(__AVX2__) || defined(__AVX__)
     return _mm256_xor_ps(m, vboolf8(true));
 #else
     return vboolf8(!vboolf4(m.vl), !vboolf4(m.vh));

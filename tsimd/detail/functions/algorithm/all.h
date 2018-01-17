@@ -46,7 +46,9 @@ namespace tsimd {
 
   TSIMD_INLINE bool all(const vboolf4 &a)
   {
-#if defined(__SSE__)
+#if defined(__AVX512VL__)
+    return a.v == 0x0f;
+#elif defined(__SSE__)
     return _mm_movemask_ps(a) == 0xf;
 #else
     for (int i = 0; i < 4; ++i) {
@@ -62,7 +64,9 @@ namespace tsimd {
 
   TSIMD_INLINE bool all(const vboolf8 &a)
   {
-#if defined(__AVX512F__) || defined(__AVX2__) || defined(__AVX__)
+#if defined(__AVX512VL__)
+    return a.v == 0xff;
+#elif defined(__AVX512F__) || defined(__AVX2__) || defined(__AVX__)
     return _mm256_movemask_ps(a) == (unsigned int)0xff;
 #else
     return all(vboolf4(a.vl)) && all(vboolf4(a.vh));

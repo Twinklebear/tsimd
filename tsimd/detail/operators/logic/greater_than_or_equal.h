@@ -43,7 +43,9 @@ namespace tsimd {
 
   TSIMD_INLINE vboolf4 operator>=(const vfloat4 &p1, const vfloat4 &p2)
   {
-#if defined(__SSE__)
+#if defined(__AVX512VL__)
+    return _mm_cmp_ps_mask(p1, p2, _CMP_GE_OQ);
+#elif defined(__SSE__)
     return _mm_cmpnlt_ps(p1, p2);
 #else
     vboolf4 result;
@@ -65,7 +67,7 @@ namespace tsimd {
   TSIMD_INLINE vboolf8 operator>=(const vfloat8 &p1, const vfloat8 &p2)
   {
 #if defined(__AVX512VL__)
-    return _mm256_cmp_ps_mask(p1, p2, _MM_CMPINT_GE);
+    return _mm256_cmp_ps_mask(p1, p2, _CMP_GE_OQ);
 #elif defined(__AVX2__) || defined(__AVX__)
     return _mm256_cmp_ps(p1, p2, _CMP_GE_OQ);
 #else
@@ -79,6 +81,7 @@ namespace tsimd {
 #if defined(__AVX512VL__)
     return _mm256_cmp_epi32_mask(p1, p2, _MM_CMPINT_GE);
 #elif defined(__AVX2__) || defined(__AVX__)
+    // TODO: I think we can do this path in all cases right?
     return !(p1 < p2);
 #else
     return vboolf8(vint4(p1.vl) >= vint4(p2.vl), vint4(p1.vh) >= vint4(p2.vh));

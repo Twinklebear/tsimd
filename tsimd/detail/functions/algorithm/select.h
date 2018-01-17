@@ -44,7 +44,9 @@ namespace tsimd {
                               const vfloat4 &t,
                               const vfloat4 &f)
   {
-#if defined(__SSE4_1__)
+#if defined(__AVX512VL__)
+    return _mm_mask_blend_ps(m, f, t);
+#elif defined(__SSE4_1__)
     return _mm_blendv_ps(f, t, m);
 #elif defined(__SSE__)
     return _mm_or_ps(_mm_and_ps(m, t), _mm_andnot_ps(m, f));
@@ -60,7 +62,9 @@ namespace tsimd {
 
   TSIMD_INLINE vint4 select(const vboolf4 &m, const vint4 &t, const vint4 &f)
   {
-#if defined(__SSE4_1__)
+#if defined(__AVX512VL__)
+    return _mm_mask_blend_epi32(m, f, t);
+#elif defined(__SSE4_1__)
     return _mm_castps_si128(
         _mm_blendv_ps(_mm_castsi128_ps(f), _mm_castsi128_ps(t), m));
 #elif defined(__SSE__)
@@ -81,7 +85,9 @@ namespace tsimd {
                               const vfloat8 &t,
                               const vfloat8 &f)
   {
-#if defined(__AVX2__) || defined(__AVX__)
+#if defined(__AVX512VL__)
+    return _mm256_mask_blend_ps(m, f, t);
+#elif defined(__AVX2__) || defined(__AVX__)
     return _mm256_blendv_ps(f, t, m);
 #else
     return vfloat8(select(vboolf4(m.vl), vfloat4(t.vl), vfloat4(f.vl)),
@@ -91,7 +97,9 @@ namespace tsimd {
 
   TSIMD_INLINE vint8 select(const vboolf8 &m, const vint8 &t, const vint8 &f)
   {
-#if defined(__AVX512F__) || defined(__AVX2__) || defined(__AVX__)
+#if defined(__AVX512VL__)
+    return _mm256_mask_blend_epi32(m, f, t);
+#elif defined(__AVX512F__) || defined(__AVX2__) || defined(__AVX__)
     return _mm256_castps_si256(
         _mm256_blendv_ps(_mm256_castsi256_ps(f), _mm256_castsi256_ps(t), m));
 #else

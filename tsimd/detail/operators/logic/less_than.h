@@ -40,7 +40,9 @@ namespace tsimd {
 
   TSIMD_INLINE vboolf4 operator<(const vfloat4 &p1, const vfloat4 &p2)
   {
-#if defined(__SSE__)
+#if defined(__AVX512VL__)
+    return _mm_cmp_ps_mask(p1, p2, _CMP_LT_OQ);
+#elif defined(__SSE__)
     return _mm_cmplt_ps(p1, p2);
 #else
     vboolf4 result;
@@ -54,7 +56,9 @@ namespace tsimd {
 
   TSIMD_INLINE vboolf4 operator<(const vint4 &p1, const vint4 &p2)
   {
-#if defined(__SSE__)
+#if defined(__AVX512VL__)
+    return _mm_cmp_epi32_mask(p1, p2, _MM_CMPINT_LT);
+#elif defined(__SSE__)
     return _mm_castsi128_ps(_mm_cmplt_epi32(p1, p2));
 #else
     vboolf4 result;
@@ -70,8 +74,9 @@ namespace tsimd {
 
   TSIMD_INLINE vboolf8 operator<(const vfloat8 &p1, const vfloat8 &p2)
   {
-#if defined(__AVX512__)
-    return _mm256_cmp_ps_mask(p1, p2, _MM_CMPINT_LT);
+#if defined(__AVX512VL__)
+    // TODO WILL: I think this is only in AVX512-VL
+    return _mm256_cmp_ps_mask(p1, p2, _CMP_LT_OQ);
 #elif defined(__AVX2__) || defined(__AVX__)
     return _mm256_cmp_ps(p1, p2, _CMP_LT_OQ);
 #else
@@ -82,7 +87,9 @@ namespace tsimd {
 
   TSIMD_INLINE vboolf8 operator<(const vint8 &p1, const vint8 &p2)
   {
-#if defined(__AVX512__) || defined(__AVX2__)
+#if defined(__AVX512VL__)
+    return _mm256_cmp_epi32_mask(p1, p2, _MM_CMPINT_LT);
+#elif defined(__AVX2__)
     return _mm256_castsi256_ps(_mm256_cmpgt_epi32(p2, p1));
 #elif defined(__AVX__)
     return vboolf8(_mm_castsi128_ps(_mm_cmplt_epi32(p1.vl, p2.vl)),

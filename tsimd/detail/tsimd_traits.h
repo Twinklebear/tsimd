@@ -252,6 +252,20 @@ namespace tsimd {
     };
 #endif
 
+#if defined(__AVX512VL__)
+    template <>
+    struct simd_type<bool32_t, 4>
+    {
+      using type = __mmask8;
+    };
+
+    template <>
+    struct simd_type<bool32_t, 8>
+    {
+      using type = __mmask8;
+    };
+#endif
+
     // Check if a pack<T, W>::intrinsic_t is actually an intrinsic type ///////
 
     // example: pack<float, 8> on AVX is type __m256, so evaluate to "true"
