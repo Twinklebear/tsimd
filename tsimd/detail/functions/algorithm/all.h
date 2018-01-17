@@ -47,7 +47,9 @@ namespace tsimd {
   TSIMD_INLINE bool all(const vboolf4 &a)
   {
 #if defined(__AVX512VL__)
-    return a.v == 0x0f;
+    // There may or may not be some bits set in the high part
+    // of the mask, which we don't care about for 4-wide.
+    return (a.v & 0xf) == 0xf;
 #elif defined(__SSE__)
     return _mm_movemask_ps(a) == 0xf;
 #else

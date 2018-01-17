@@ -309,25 +309,25 @@ TEST_CASE("binary operator>=()", "[logic_operators]")
 
 TEST_CASE("binary operator&&()", "[logic_operators]")
 {
-  vbool m1(true);
-  vbool m2(false);
+  vbool m1(bool_type(true));
+  vbool m2(bool_type(false));
 
   REQUIRE(tsimd::none(m1 & m2));
 }
 
 TEST_CASE("binary operator||()", "[logic_operators]")
 {
-  vbool m1(true);
-  vbool m2(false);
+  vbool m1(bool_type(true));
+  vbool m2(bool_type(false));
 
   REQUIRE(tsimd::all(m1 | m2));
 }
 
 TEST_CASE("unary operator!()", "[logic_operators]")
 {
-  vbool v(true);
+  vbool v(bool_type(true));
 
-  REQUIRE(tsimd::all(!v == vbool(false)));
+  REQUIRE(tsimd::all(!v == vbool(bool_type(false))));
 }
 
 TEST_CASE("unary operator-()", "[logic_operators]")
@@ -443,7 +443,7 @@ TEST_CASE("foreach()", "[algorithms]")
 TEST_CASE("foreach_active()", "[algorithms]")
 {
   if (vbool::static_size > 1) {
-    vbool m(false);
+    vbool m(bool_type(false));
 
     m[0] = true;
     m[2] = true;
@@ -458,8 +458,8 @@ TEST_CASE("foreach_active()", "[algorithms]")
 
     REQUIRE(tsimd::all(v1 == expected));
   } else {
-    vbool mf(false);
-    vbool mt(true);
+    vbool mf(bool_type(false));
+    vbool mt(bool_type(true));
 
     int checker = 0;
 
@@ -472,7 +472,7 @@ TEST_CASE("foreach_active()", "[algorithms]")
 
 TEST_CASE("any()", "[algorithms]")
 {
-  vbool m(false);
+  vbool m(bool_type(false));
   REQUIRE(!tsimd::any(m));
   m[0] = true;
   REQUIRE(tsimd::any(m));
@@ -480,7 +480,7 @@ TEST_CASE("any()", "[algorithms]")
 
 TEST_CASE("none()", "[algorithms]")
 {
-  vbool m(false);
+  vbool m(bool_type(false));
   REQUIRE(tsimd::none(m));
   m[0] = true;
   REQUIRE(!tsimd::none(m));
@@ -488,7 +488,7 @@ TEST_CASE("none()", "[algorithms]")
 
 TEST_CASE("all()", "[algorithms]")
 {
-  vbool m(false);
+  vbool m(bool_type(false));
   REQUIRE(!tsimd::all(m));
 
   if (vbool::static_size > 1) {
@@ -504,7 +504,7 @@ TEST_CASE("all()", "[algorithms]")
 TEST_CASE("select()", "[algorithms]")
 {
   if (vbool::static_size > 1) {
-    vbool m(false);
+    vbool m(bool_type(false));
     m[0] = true;
     m[2] = true;
 
@@ -523,7 +523,7 @@ TEST_CASE("select()", "[algorithms]")
     REQUIRE(tsimd::any(v1 != expected));
     REQUIRE(tsimd::any(v2 != expected));
   } else {
-    vbool mt(true);
+    vbool mt(bool_type(true));
     vbool mf(false);
 
     vint v1(0);
@@ -565,7 +565,7 @@ TEST_CASE("masked load()", "[memory_operations]")
   TSIMD_ALIGN(32) std::array<int_type, vint::static_size> values;
   std::fill(values.begin(), values.end(), 5);
 
-  vbool m(true);
+  vbool m(bool_type(true));
   m[2] = false;
 
   vint v1(0);
@@ -650,3 +650,4 @@ TEST_CASE("precomputed_halton_engine<base>()", "[random]]")
   precomputed_halton_test<9>();
   precomputed_halton_test<10>();
 }
+

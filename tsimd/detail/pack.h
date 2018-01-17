@@ -290,6 +290,26 @@ namespace tsimd {
       : v(_mm512_set1_epi32(value))
   {
   }
+
+  template <>
+  TSIMD_INLINE vboolf16::pack(bool32_t value)
+  {
+    v = value ? 0xffff : 0;
+  }
+#endif
+
+#if defined(__AVX512VL__)
+  template <>
+  TSIMD_INLINE vboolf4::pack(bool32_t value)
+  {
+    v = value ? 0xff : 0;
+  }
+
+  template <>
+  TSIMD_INLINE vboolf8::pack(bool32_t value)
+  {
+    v = value ? 0xff : 0;
+  }
 #endif
 
   // Generic pack<> members //
@@ -435,6 +455,50 @@ namespace tsimd {
 
     return o;
   }
+
+#if defined(__AVX512VL__)
+  template <int W>
+  TSIMD_INLINE std::ostream &operator<<(std::ostream &o, const pack<bool32_t, W> &p)
+  {
+    o << "{";
+
+    for (size_t i = 0; i < W; ++i) {
+      if ((p.v >> i) & 1)
+        o << " 1";
+      else
+        o << " 0";
+    }
+
+    o << " }";
+
+    return o;
+  }
+
+  template <>
+  TSIMD_INLINE std::ostream &operator<<(std::ostream &o, const pack<bool32_t, 1> &p)
+  {
+    o << "{ " << p.v << " }";
+    return o;
+  }
+#elif defined(__AVX512F__)
+  template <>
+  TSIMD_INLINE std::ostream &operator<<(std::ostream &o, const pack<bool32_t, 16> &p)
+  {
+    o << "{";
+
+    for (size_t i = 0; i < 16; ++i) {
+      if ((p.v >> i) & 1)
+        o << " 1";
+      else
+        o << " 0";
+    }
+
+    o << " }";
+
+    return o;
+  }
+#endif
+
 
   template <typename T, int W>
   TSIMD_INLINE void print(const pack<T, W> &p)

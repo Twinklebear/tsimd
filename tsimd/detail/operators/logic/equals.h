@@ -73,8 +73,7 @@ namespace tsimd {
   TSIMD_INLINE vboolf4 operator==(const vboolf4 &p1, const vboolf4 &p2)
   {
 #if defined(__AVX512VL__)
-    // TODO: Is this actually ok?
-    return p1.v == p2.v;
+    return _mm512_kand(_mm512_kxnor(p1.v, p2.v), 0xf);
 #elif defined(__SSE__)
     return _mm_castsi128_ps(_mm_cmpeq_epi32(p1, p2));
 #else
@@ -118,7 +117,7 @@ namespace tsimd {
   TSIMD_INLINE vboolf8 operator==(const vboolf8 &p1, const vboolf8 &p2)
   {
 #if defined(__AVX512VL__)
-    return p1.v == p2.v;
+    return _mm512_kxnor(p1.v, p2.v);
 #elif defined(__AVX512F__) || defined(__AVX2__) || defined(__AVX__)
     return _mm256_cmp_ps(p1, p2, _CMP_EQ_OQ);
 #else
